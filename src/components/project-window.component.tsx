@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import About from "./about.component";
-import Chat from "./chat.component";
+import { Chat, HistorySideBar } from "./chat.component";
 
 function EquoWindow() {
   type Page = "about" | "chat" | "docs";
@@ -54,7 +54,9 @@ function EquoWindow() {
       {/* Body Component */}
       <div className="flex-1 flex flex-row">
         {/* SideBar */}
-        <div className="w-80"></div>
+        <div className="w-80">
+          {selected === "chat" && <HistorySideBar />}
+        </div>
 
         {/* Content */}
         <div className="flex-1">
