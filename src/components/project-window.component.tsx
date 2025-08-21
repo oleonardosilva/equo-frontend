@@ -23,10 +23,10 @@ function EquoWindow() {
   ];
 
   return (
-    <div className="col-span-full mt-8 mb-8 bg-black rounded-xl border-1 border-line flex flex-col">
+    <div className="col-span-full mt-8 mb-8 bg-black rounded-xl border-2 border-line flex flex-col">
       {/* Header Component */}
-      <header className="flex flex-row border-b-1 border-line text-base">
-        <div className="border-r-1 border-line w-80 flex flex-col justify-center">
+      <header className="flex flex-row border-b-2 border-line text-base">
+        <div className="border-r-2 border-line w-80 flex flex-col justify-center">
           <span className="ml-4 select-none">projeto-equo</span>
         </div>
 
@@ -35,7 +35,7 @@ function EquoWindow() {
             return (
               <button key={key} onClick={() => setSelected(item.id)}>
                 <div
-                  className={`relative border-r-1 border-line p-4 text-center cursor-pointer duration-200 hover:bg-btn-hover
+                  className={`relative border-r-2 border-line p-4 text-center cursor-pointer duration-200 hover:bg-btn-hover
                 after:content-[''] 
                 after:absolute after:left-0 after:bottom-0
                 after:h-[2px] after:w-full after:bg-btn-underline
@@ -64,7 +64,7 @@ function EquoWindow() {
       </div>
 
       {/* Footer Component */}
-      <footer className="border-t-1 border-line flex flex-row justify-end">
+      <footer className="border-t-2 border-line flex flex-row justify-end">
         <div className="px-4 py-2">
           <span className="text-sm">
             &copy; 2025 IFSP Cubatão. Todos os direitos reservados.
