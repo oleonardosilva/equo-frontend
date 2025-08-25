@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const UPLOAD_DIR = path.join(process.cwd(), "uploads");
+const UPLOAD_DIR = "/tmp/uploads";
 
 // Garantir que a pasta exista
 if (!fs.existsSync(UPLOAD_DIR)) {
