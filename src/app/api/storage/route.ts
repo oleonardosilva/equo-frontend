@@ -94,7 +94,7 @@ export async function GET(req: Request) {
       headers.append("Content-Length", metadata.size.toString());
     }
 
-    return new Response(fileBuffer, { headers });
+    return new Response(new Uint8Array(fileBuffer), { headers });
   } catch (error) {
     console.error("Erro no GET:", error);
     const message =
