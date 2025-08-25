@@ -3,6 +3,7 @@
 import { useState } from "react";
 import About from "./about.component";
 import { Chat, HistorySideBar } from "./chat.component";
+import { ChatProvider } from "@/context/chat.context";
 
 function EquoWindow() {
   type Page = "about" | "chat" | "docs";
@@ -35,7 +36,7 @@ function EquoWindow() {
             return (
               <button key={key} onClick={() => setSelected(item.id)}>
                 <div
-                  className={`relative border-r-2 border-line p-4 text-center cursor-pointer duration-200 hover:bg-btn-hover
+                  className={`relative select-none border-r-2 border-line p-4 text-center cursor-pointer duration-200 hover:bg-btn-hover
                 after:content-[''] 
                 after:absolute after:left-0 after:bottom-0
                 after:h-[2px] after:w-full after:bg-btn-underline
@@ -52,17 +53,20 @@ function EquoWindow() {
       </header>
 
       {/* Body Component */}
-      <div className="flex-1 flex flex-row">
-        {/* SideBar */}
-        <div className="w-80">
-          {selected === "chat" && <HistorySideBar />}
-        </div>
 
-        {/* Content */}
-        <div className="flex-1">
-          {selected === "about" && <About />}
-          {selected === "chat" && <Chat />}
-        </div>
+      <div className="flex-1 flex flex-row">
+        <ChatProvider>
+          {/* SideBar */}
+          <div className="w-80">
+            {selected === "chat" && <HistorySideBar />}
+          </div>
+
+          {/* Content */}
+          <div className="flex-1">
+            {selected === "about" && <About />}
+            {selected === "chat" && <Chat />}
+          </div>
+        </ChatProvider>
       </div>
 
       {/* Footer Component */}

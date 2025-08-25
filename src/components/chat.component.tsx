@@ -1,38 +1,30 @@
-import { useState } from "react";
+import { useChat } from "@/context/chat.context";
+import { HistoryService } from "@/services/history.service";
+import { useEffect, useState } from "react";
 import { FiUpload } from "react-icons/fi";
 
 function Chat() {
-  const [image, setImage] = useState<File>();
-  const [isLoading, setLoading] = useState<boolean>(false);
-  const [result, setResult] = useState<string>();
+  const {
+    image,
+    setImage,
+    isLoading,
+    result,
+    clear,
+    onSubmit,
+    uploadFile,
+  } = useChat();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    clear();
     if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
+      const file = e.target.files[0];
+      await uploadFile(file);
+      setImage(file);
     }
-  };
-
-  const clear = () => {
-    setResult(undefined);
-    setImage(undefined);
-  };
-
-  const onSubmit = () => {
-    setResult(undefined);
-    setLoading(true);
-
-    setTimeout(() => {
-      setLoading(false);
-      setResult("Benigno");
-    }, 5000);
   };
 
   return (
     <div className="w-full h-full flex flex-row items-center">
-      {/**
-       * Área de upload de imagem
-       */}
-
       <div>
         <label
           htmlFor="file-upload"
@@ -41,7 +33,7 @@ function Chat() {
           {!image ? (
             <>
               <FiUpload className="text-4xl mb-2" />
-              <span className="">Clique ou arraste uma imagem</span>
+              <span>Clique ou arraste uma imagem</span>
               <input
                 id="file-upload"
                 type="file"
@@ -59,17 +51,11 @@ function Chat() {
           )}
         </label>
         {image && (
-          <div className="grid grid-cols-2 gap-4 mt-4 w-96">
-            <button
-              onClick={clear}
-              className="cursor-pointer px-6 py-2 bg-rose-600 duration-200 text-white rounded hover:bg-red-400 transition-colors"
-            >
-              Remover
-            </button>
-
+          <div className="flex justify-center mt-6 w-96">
             <button
               onClick={onSubmit}
-              className="cursor-pointer px-6 py-2 bg-blue-600 duration-200 text-white rounded hover:bg-blue-500 transition-colors"
+              hidden={!!result || isLoading}
+              className="cursor-pointer px-12 py-2 bg-blue-600 duration-200 text-white rounded hover:bg-blue-500 transition-colors"
             >
               Analisar
             </button>
@@ -77,9 +63,6 @@ function Chat() {
         )}
       </div>
 
-      {/**
-       * Exibição do resultado/loading da análise da IA
-       */}
       <div className="flex-1 flex justify-center items-center">
         {isLoading && (
           <div className="flex flex-col justify-center items-center">
@@ -87,7 +70,6 @@ function Chat() {
             <div className="mt-4">Analisando....</div>
           </div>
         )}
-
         {!!result && (
           <div className="flex-col justify-center items-center">
             <div className="text-secondary">Resultado: {result}</div>
@@ -99,13 +81,58 @@ function Chat() {
 }
 
 function HistorySideBar() {
+  const { setImage, setResult, image, imageVersion } = useChat();
+  const [history, setHistory] = useState<
+    { id: string; name: string; result: string }[]
+  >([]);
+
+  useEffect(() => {
+    const historyService = new HistoryService();
+    setHistory(historyService.getHistory());
+  }, [imageVersion]);
+
+  const onClickFile = async (item: any) => {
+    const historyService = new HistoryService();
+    const blob = await historyService.getFile(item.filePath);
+    if (!blob) return;
+    const file = new File([blob], item.name, { type: blob.type });
+
+    setImage(file);
+    setResult(item.result);
+  };
+
   return (
     <div className="flex flex-col p-6 w-full h-full">
-      <div>
-        <span>Histórico</span>
+      <div className="h-full select-none">
+        <span>histórico</span>
+        <div className="ml-4 mt-2 flex flex-col overflow-y-scroll h-4/5 scrollbar-thin">
+          <span
+            className={`mt-1 w-fit cursor-pointer duration-100 hover:text-tertiary ${
+              !image ? "text-tertiary" : ""
+            }`}
+            onClick={() => {
+              setImage(undefined);
+              setResult(undefined);
+            }}
+          >
+            {"> _new upload"}
+          </span>
+
+          {history.map((item, index) => (
+            <span
+              key={index}
+              className={`mt-1 cursor-pointer duration-100 hover:text-tertiary truncate ${
+                image?.name === item.name ? "text-tertiary" : ""
+              }`}
+              onClick={() => onClickFile(item)}
+            >
+              {`> _${item.name}`}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
-  )
+  );
 }
 
 export { Chat, HistorySideBar };
